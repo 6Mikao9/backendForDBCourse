@@ -1,0 +1,16 @@
+com\bundling\vo\ResultPreviewResponseData.class
+com\bundling\vo\Bundle.class
+com\bundling\vo\ResultPreviewResponseData$AssociationRule.class
+com\bundling\service\TrainingDataService.class
+com\bundling\vo\TrainHistoryQueryResponseData$2.class
+com\bundling\Application.class
+com\bundling\Controllers\Controller.class
+com\bundling\vo\TrainHistoryQueryResponseData$1.class
+com\bundling\vo\TrainHistoryQueryResponseData.class
+com\bundling\vo\TrainHistoryQueryResponseData$TrainRecord.class
+com\bundling\vo\QueryRequest.class
+com\bundling\CorsConfig.class
+com\bundling\vo\BundleResponseData.class
+com\bundling\vo\DataID.class
+com\bundling\dao\MongoUtils.class
+com\bundling\vo\ResultPreviewResponseData$FrequentItemSet.class
