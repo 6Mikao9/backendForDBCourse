@@ -22,11 +22,13 @@
             <artifactId>commons-compress</artifactId>
             <version>1.21</version> <!-- 使用最新版本 -->
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
         <dependency>
-            <groupId>com.huaweicloud.dws</groupId>
-            <artifactId>huaweicloud-dws-jdbc</artifactId>
-            <version>8.1.1.1-200</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>9.1.0</version>
         </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
         <dependency>

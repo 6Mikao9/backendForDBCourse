@@ -21,6 +21,14 @@ public class Controller {
     @Autowired
     private TrainingDataService trainingDataService;
 
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> requestBody) {
+        Map<String, String> map = new HashMap<>();
+        map.put("token", "12345");
+        System.out.println(requestBody);
+        return ResponseEntity.ok(map);
+    }
+
     @PostMapping("/upload-data")
     public ResponseEntity<Map<String,String>> upload(@RequestParam("file") MultipartFile file) {
         Map<String, String> map = new HashMap<>();
