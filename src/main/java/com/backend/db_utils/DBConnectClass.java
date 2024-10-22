@@ -10,6 +10,10 @@ public class DBConnectClass {
     private static String username;
     private static String password;
 
+    public static Connection getCon() {
+        return con;
+    }
+
     public static Connection con;
 
 
@@ -27,7 +31,7 @@ public class DBConnectClass {
             catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-            Connection con = DriverManager.getConnection(url,username,password);
+            con = DriverManager.getConnection(url,username,password);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -78,6 +82,6 @@ public class DBConnectClass {
         pstmt.close();
         stmt.close();
          */
-        //con.close();
+        con.close();
     }
 }
