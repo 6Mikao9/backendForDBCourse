@@ -1,5 +1,6 @@
 package com.backend.Controllers;
 
+import com.backend.db_utils.*;
 import com.backend.service.*;
 import com.backend.vo.*;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import java.io.*;
+import java.sql.*;
 import java.util.*;
 
 @RestController
@@ -122,6 +124,11 @@ public class Controller {
 
     @GetMapping("/result/preview/{trainId}")
     public ResponseEntity<ResultPreviewResponseData> previewResult(@PathVariable String trainId) {
+        try {
+            DBConnectClass.test();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         ResultPreviewResponseData result = ResultPreviewResponseData.getPreviewResultExample();
         return ResponseEntity.ok(result);
     }

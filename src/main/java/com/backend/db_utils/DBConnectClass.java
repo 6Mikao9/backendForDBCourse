@@ -1,5 +1,7 @@
 package com.backend.db_utils;
 
+import lombok.*;
+
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -10,10 +12,7 @@ public class DBConnectClass {
     private static String username;
     private static String password;
 
-    public static Connection getCon() {
-        return con;
-    }
-
+    @Getter
     public static Connection con;
 
 
@@ -40,28 +39,22 @@ public class DBConnectClass {
     }
 
 
-    public static void main(String[] args) throws SQLException {
+    public static void test() throws SQLException {
         System.out.println("initialize");
-//        try {
-//            Class.forName("com.mysql.cj.jdbc.Driver");
-//        }
-//        catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        con = DriverManager.getConnection(url,username,password);
+
         System.out.println("Database connected");
 
         //使用示例
-        /*
+
         Statement stmt = con.createStatement();
 
-        String sql = "CREATE TABLE IF NOT EXISTS student (" +
+        String sql = "CREATE TABLE IF NOT EXISTS students (" +
                 "Sid INT AUTO_INCREMENT PRIMARY KEY, " +
                 "Sname VARCHAR(50) NOT NULL, " +
                 "Sgander VARCHAR(50) NOT NULL, " +
                 "Sage INT NOT NULL)";
         stmt.executeUpdate(sql);
-        sql = "INSERT INTO student (Sid,Sname,Sgander,Sage) VALUES (?,?,?,?)";
+        sql = "INSERT INTO students (Sid,Sname,Sgander,Sage) VALUES (?,?,?,?)";
         PreparedStatement pstmt = con.prepareStatement(sql);
         pstmt.setInt(1, 22371285);
         pstmt.setString(2, "Yuntao Liu");
@@ -69,7 +62,7 @@ public class DBConnectClass {
         pstmt.setInt(4, 20);
         pstmt.executeUpdate();
 
-        sql = "SELECT * FROM student";
+        sql = "SELECT * FROM students";
         ResultSet rs = stmt.executeQuery(sql);
         while (rs.next()) {
             int id = rs.getInt("Sid");
@@ -81,7 +74,7 @@ public class DBConnectClass {
         rs.close();
         pstmt.close();
         stmt.close();
-         */
+
         con.close();
     }
 }
