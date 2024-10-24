@@ -38,6 +38,24 @@ public class DBConnectClass {
         }
     }
 
+    public static void createTables() throws SQLException {
+        //创建用户表
+        Statement stmt = con.createStatement();
+        String sql = "CREATE TABLE IF NOT EXISTS users (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "username VARCHAR(50) NOT NULL, " +
+                "userpassword VARCHAR(50) NOT NULL, " +
+                "Sbalance DOUBLE NOT NULL)";
+        stmt.executeUpdate(sql);
+        //创建开发者表
+        sql = "CREATE TABLE IF NOT EXISTS developers (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "username VARCHAR(50) NOT NULL, " +
+                "userpassword VARCHAR(50) NOT NULL, " +
+                "balance DOUBLE NOT NULL)";
+        stmt.executeUpdate(sql);
+    }
+
 
     public static void test() throws SQLException {
         System.out.println("initialize");
@@ -55,12 +73,12 @@ public class DBConnectClass {
                 "Sage INT NOT NULL)";
         stmt.executeUpdate(sql);
         sql = "INSERT INTO students (Sid,Sname,Sgander,Sage) VALUES (?,?,?,?)";
-        PreparedStatement pstmt = con.prepareStatement(sql);
-        pstmt.setInt(1, 22371285);
-        pstmt.setString(2, "Yuntao Liu");
-        pstmt.setString(3, "man");
-        pstmt.setInt(4, 20);
-        pstmt.executeUpdate();
+//        PreparedStatement pstmt = con.prepareStatement(sql);
+//        pstmt.setInt(1, 22371285);
+//        pstmt.setString(2, "Yuntao Liu");
+//        pstmt.setString(3, "man");
+//        pstmt.setInt(4, 20);
+//        pstmt.executeUpdate();
 
         sql = "SELECT * FROM students";
         ResultSet rs = stmt.executeQuery(sql);
@@ -72,7 +90,7 @@ public class DBConnectClass {
             System.out.println(id + " " + name + " " + sgander + " " + age);
         }
         rs.close();
-        pstmt.close();
+        //pstmt.close();
         stmt.close();
 
         con.close();
