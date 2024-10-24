@@ -83,6 +83,18 @@ public class DBConnectClass {
         return rs.next();
     }
 
+    //用户注册
+    public static void userRegister(String username, String password) throws SQLException {
+        Statement stmt = con.createStatement();
+        String sql = "INSERT INTO users (id,username,userpassword,Sbalance) VALUES (?,?,?,?)";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setInt(1, 0);
+        pstmt.setString(2, username);
+        pstmt.setString(3, password);
+        pstmt.setDouble(4, 10000);
+        pstmt.executeUpdate();
+    }
+
     public static void test() throws SQLException {
         System.out.println("initialize");
 
