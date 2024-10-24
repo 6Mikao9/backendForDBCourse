@@ -1,6 +1,6 @@
 package com.backend.Controllers;
 
-import com.backend.db_utils.*;
+import com.backend.Utils.*;
 import com.backend.service.*;
 import com.backend.vo.*;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
-import static com.backend.db_utils.DBConnectClass.*;
+import static com.backend.Utils.DBConnectClass.*;
 
 @RestController
 @Slf4j

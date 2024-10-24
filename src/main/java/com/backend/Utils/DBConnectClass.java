@@ -1,4 +1,4 @@
-package com.backend.db_utils;
+package com.backend.Utils;
 
 import lombok.*;
 
