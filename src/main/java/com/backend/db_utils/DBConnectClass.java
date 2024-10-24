@@ -47,15 +47,41 @@ public class DBConnectClass {
                 "userpassword VARCHAR(50) NOT NULL, " +
                 "Sbalance DOUBLE NOT NULL)";
         stmt.executeUpdate(sql);
+        //向用户表中插入一条示例数据
+        sql = "INSERT INTO users (id,username,userpassword,Sbalance) VALUES (?,?,?,?)";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setInt(1, 1);
+        pstmt.setString(2, "test");
+        pstmt.setString(3, "test");
+        pstmt.setDouble(4, 10000);
+        pstmt.executeUpdate();
         //创建开发者表
         sql = "CREATE TABLE IF NOT EXISTS developers (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
                 "username VARCHAR(50) NOT NULL, " +
                 "userpassword VARCHAR(50) NOT NULL, " +
+                "heat INT NOT NULL,"+
                 "balance DOUBLE NOT NULL)";
         stmt.executeUpdate(sql);
     }
 
+    /**
+     * 用户登录
+     */
+    public static boolean userLogin(String username, String password) throws SQLException {
+        Statement stmt = con.createStatement();
+        String sql = "SELECT * FROM users WHERE username='" + username + "' AND userpassword='" + password + "'";
+        ResultSet rs = stmt.executeQuery(sql);
+        return rs.next();
+    }
+
+    //developer登陆
+    public static boolean developerLogin(String username, String password) throws SQLException {
+        Statement stmt = con.createStatement();
+        String sql = "SELECT * FROM developers WHERE username='" + username + "' AND userpassword='" + password + "'";
+        ResultSet rs = stmt.executeQuery(sql);
+        return rs.next();
+    }
 
     public static void test() throws SQLException {
         System.out.println("initialize");

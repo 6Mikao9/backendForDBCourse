@@ -15,6 +15,8 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
+import static com.backend.db_utils.DBConnectClass.*;
+
 @RestController
 @Slf4j
 @RequestMapping("/api")
@@ -24,9 +26,19 @@ public class Controller {
     private TrainingDataService trainingDataService;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> requestBody) throws SQLException {
         Map<String, String> map = new HashMap<>();
-        map.put("token", "12345");
+        // 数据库中查询login
+        String username = requestBody.get("username");
+        String password = requestBody.get("password");
+        if(userLogin(username,password)) {
+            map.put("token", "user");
+        }else if(developerLogin(username,password)) {
+            map.put("token", "developer");
+        }else {
+            //map.put("token", "error");
+            return ResponseEntity.status(401).body(map);
+        }
         System.out.println(requestBody);
         return ResponseEntity.ok(map);
     }
