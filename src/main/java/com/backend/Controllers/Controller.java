@@ -26,6 +26,7 @@ public class Controller {
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> requestBody) throws SQLException {
         Map<String, String> map = new HashMap<>();
+        System.out.println("request body:"+requestBody);
         // 数据库中查询login
         String username = requestBody.get("username");
         String password = requestBody.get("password");
@@ -37,7 +38,7 @@ public class Controller {
             //map.put("token", "error");
             return ResponseEntity.status(401).body(map);
         }
-        System.out.println(requestBody);
+
         return ResponseEntity.ok(map);
     }
 

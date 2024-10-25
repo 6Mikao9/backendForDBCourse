@@ -109,8 +109,8 @@ public class DBConnectClass {
                 "Sname VARCHAR(50) NOT NULL, " +
                 "Sgander VARCHAR(50) NOT NULL, " +
                 "Sage INT NOT NULL)";
-        stmt.executeUpdate(sql);
-        sql = "INSERT INTO students (Sid,Sname,Sgander,Sage) VALUES (?,?,?,?)";
+//        stmt.executeUpdate(sql);
+//        sql = "INSERT INTO students (Sid,Sname,Sgander,Sage) VALUES (?,?,?,?)";
 //        PreparedStatement pstmt = con.prepareStatement(sql);
 //        pstmt.setInt(1, 22371285);
 //        pstmt.setString(2, "Yuntao Liu");
@@ -131,6 +131,6 @@ public class DBConnectClass {
         //pstmt.close();
         stmt.close();
 
-        con.close();
+
     }
 }
