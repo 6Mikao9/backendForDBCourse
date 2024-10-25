@@ -1,5 +1,6 @@
 package com.backend;
 
+import com.backend.Utils.DBConnectClass;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -15,7 +16,7 @@ import java.sql.*;
 })
 public class Application {
     public static void main(String[] args) throws SQLException {
-        //DBConnectClass.createTables();
+        DBConnectClass.createTables();
         SpringApplication.run(Application.class, args);
     }
 }

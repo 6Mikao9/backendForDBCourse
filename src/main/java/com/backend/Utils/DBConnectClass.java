@@ -26,11 +26,10 @@ public class DBConnectClass {
             password = properties.getProperty("password");
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
-            }
-            catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-            con = DriverManager.getConnection(url,username,password);
+            con = DriverManager.getConnection(url, username, password);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -39,8 +38,9 @@ public class DBConnectClass {
     }
 
     public static void createTables() throws SQLException {
-        //创建用户表
         Statement stmt = con.createStatement();
+        //创建用户表
+        // user(id, username, userpassword, Sbalance)
         String sql = "CREATE TABLE IF NOT EXISTS users (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
                 "username VARCHAR(50) NOT NULL, " +
@@ -48,20 +48,41 @@ public class DBConnectClass {
                 "Sbalance DOUBLE NOT NULL)";
         stmt.executeUpdate(sql);
         //向用户表中插入一条示例数据
-        sql = "INSERT INTO users (id,username,userpassword,Sbalance) VALUES (?,?,?,?)";
-        PreparedStatement pstmt = con.prepareStatement(sql);
-        pstmt.setInt(1, 1);
-        pstmt.setString(2, "test");
-        pstmt.setString(3, "test");
-        pstmt.setDouble(4, 10000);
-        pstmt.executeUpdate();
+//        sql = "INSERT INTO users (id,username,userpassword,Sbalance) VALUES (?,?,?,?)";
+//        PreparedStatement pstmt = con.prepareStatement(sql);
+//        pstmt.setInt(1, 1);
+//        pstmt.setString(2, "test");
+//        pstmt.setString(3, "test");
+//        pstmt.setDouble(4, 10000);
+//        pstmt.executeUpdate();
         //创建开发者表
+        // developers(id, username, userpassword, heat, balance)
         sql = "CREATE TABLE IF NOT EXISTS developers (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
                 "username VARCHAR(50) NOT NULL, " +
                 "userpassword VARCHAR(50) NOT NULL, " +
-                "heat INT NOT NULL,"+
+                "heat INT NOT NULL," +
                 "balance DOUBLE NOT NULL)";
+        stmt.executeUpdate(sql);
+
+        // 创建mods表
+        // mods(id, softwareId, userId, downloads, heat)
+        sql = "CREATE TABLE IF NOT EXISTS mods (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "softwareId INT NOT NULL, " +
+                "userId INT NOT NULL, " +
+                "downloads INT NOT NULL, " +
+                "heat INT NOT NULL)";
+        stmt.executeUpdate(sql);
+
+        // 创建softwares表
+        // softwares(<u>id</u>, softwarename, developerId, downloads, heat)
+        sql = "CREATE TABLE IF NOT EXISTS softwares(" +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "softwareName VARCHAR(50) NOT NULL," +
+                "developerId INT NOT NULL," +
+                "downloads INT NOT NULL, " +
+                "heat INT NOT NULL)";
         stmt.executeUpdate(sql);
     }
 
@@ -93,6 +114,14 @@ public class DBConnectClass {
         pstmt.setString(3, password);
         pstmt.setDouble(4, 10000);
         pstmt.executeUpdate();
+    }
+
+    public static ArrayList<Integer> searchMod(String keyword) throws SQLException {
+        Statement stmt = con.createStatement();
+        String sql = "SELECT * FROM mods WHERE keyword='" + keyword + "'";
+        ResultSet rs = stmt.executeQuery(sql);
+
+        return null;
     }
 
     public static void test() throws SQLException {
