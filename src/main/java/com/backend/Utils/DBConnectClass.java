@@ -16,7 +16,7 @@ public class DBConnectClass {
     public static Connection con;
 
 
-    //将db.properties文件读取出来
+    // 将db.properties文件读取出来
     static {
         try {
             Properties properties = new Properties();
@@ -47,15 +47,6 @@ public class DBConnectClass {
                 "password VARCHAR(50) NOT NULL, " +
                 "balance DOUBLE NOT NULL)";
         stmt.executeUpdate(sql);
-        //向用户表中插入一条示例数据
-//        sql = "INSERT INTO users (id,username,userpassword,Sbalance) VALUES (?,?,?,?)";
-//        PreparedStatement pstmt = con.prepareStatement(sql);
-//        pstmt.setInt(1, 1);
-//        pstmt.setString(2, "test");
-//        pstmt.setString(3, "test");
-//        pstmt.setDouble(4, 10000);
-//        pstmt.executeUpdate();
-
 
         //创建开发者表
         // developers(developerId, developername, password, heat, balance)
@@ -68,9 +59,10 @@ public class DBConnectClass {
         stmt.executeUpdate(sql);
 
         // 创建mods表
-        // mods(modId, softwareId, userId, downloads, heat)
+        // mods(modId, modname, softwareId, userId, downloads, heat)
         sql = "CREATE TABLE IF NOT EXISTS mods (" +
                 "modId INT AUTO_INCREMENT PRIMARY KEY, " +
+                "modname VARCHAR(50) NOT NULL ," +
                 "softwareId INT NOT NULL, " +
                 "userId INT NOT NULL, " +
                 "downloads INT NOT NULL, " +
@@ -80,7 +72,7 @@ public class DBConnectClass {
         // 创建softwares表
         // softwares(softwareId, softwarename, developerId, downloads, heat)
         sql = "CREATE TABLE IF NOT EXISTS softwares(" +
-                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "softwareId INT AUTO_INCREMENT PRIMARY KEY," +
                 "softwareName VARCHAR(50) NOT NULL," +
                 "developerId INT NOT NULL," +
                 "downloads INT NOT NULL, " +
@@ -106,7 +98,6 @@ public class DBConnectClass {
 
     //用户注册
     public static void userRegister(String username, String password) throws SQLException {
-        Statement stmt = con.createStatement();
         String sql = "INSERT INTO users (userId,username,password,balance) VALUES (?,?,?,?)";
         PreparedStatement pstmt = con.prepareStatement(sql);
         pstmt.setInt(1, 0);
@@ -116,18 +107,48 @@ public class DBConnectClass {
         pstmt.executeUpdate();
     }
 
-    public static ArrayList<Integer> searchMod(String keyword) throws SQLException {
-        Statement stmt = con.createStatement();
-        String sql = "SELECT * FROM mods WHERE keyword='" + keyword + "'";
-        ResultSet rs = stmt.executeQuery(sql);
+    public static ArrayList<Map<String, String>> searchMod(String keyword) throws SQLException {
+        ArrayList<Map<String, String>> results = new ArrayList<>();
+        String sql = "SELECT modId FROM mods WHERE modname='" + keyword + "'";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+        while (rs.next()) {
+            Integer modId = rs.getInt("modId");
+            Map map = new HashMap();
+            map.put("id", modId.toString());
+            results.add(map);
+        }
+        return results;
+    }
 
-        return null;
+    public static ArrayList<Map<String, String>> searchSoftware(String keyword) throws SQLException {
+        ArrayList<Map<String, String>> results = new ArrayList<>();
+        String sql = "SELECT softwareId FROM softwares WHERE softwarename='" + keyword + "'";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+        System.out.println("AAA");
+        while (rs.next()) {
+            Integer softwareId = rs.getInt("softwareId");
+            Map map = new HashMap();
+            map.put("id", softwareId.toString());
+            results.add(map);
+        }
+        return results;
     }
 
     public static void test() throws SQLException {
         System.out.println("initialize");
 
         System.out.println("Database connected");
+
+        //向用户表中插入一条示例数据
+//        sql = "INSERT INTO users (id,username,userpassword,Sbalance) VALUES (?,?,?,?)";
+//        PreparedStatement pstmt = con.prepareStatement(sql);
+//        pstmt.setInt(1, 1);
+//        pstmt.setString(2, "test");
+//        pstmt.setString(3, "test");
+//        pstmt.setDouble(4, 10000);
+//        pstmt.executeUpdate();
 
         //使用示例
 
