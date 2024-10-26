@@ -40,12 +40,12 @@ public class DBConnectClass {
     public static void createTables() throws SQLException {
         Statement stmt = con.createStatement();
         //创建用户表
-        // user(id, username, userpassword, Sbalance)
+        // user(userId, username, password, balance)
         String sql = "CREATE TABLE IF NOT EXISTS users (" +
-                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "userId INT AUTO_INCREMENT PRIMARY KEY, " +
                 "username VARCHAR(50) NOT NULL, " +
-                "userpassword VARCHAR(50) NOT NULL, " +
-                "Sbalance DOUBLE NOT NULL)";
+                "password VARCHAR(50) NOT NULL, " +
+                "balance DOUBLE NOT NULL)";
         stmt.executeUpdate(sql);
         //向用户表中插入一条示例数据
 //        sql = "INSERT INTO users (id,username,userpassword,Sbalance) VALUES (?,?,?,?)";
@@ -55,20 +55,22 @@ public class DBConnectClass {
 //        pstmt.setString(3, "test");
 //        pstmt.setDouble(4, 10000);
 //        pstmt.executeUpdate();
+
+
         //创建开发者表
-        // developers(id, username, userpassword, heat, balance)
+        // developers(developerId, developername, password, heat, balance)
         sql = "CREATE TABLE IF NOT EXISTS developers (" +
-                "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "username VARCHAR(50) NOT NULL, " +
-                "userpassword VARCHAR(50) NOT NULL, " +
+                "developerId INT AUTO_INCREMENT PRIMARY KEY, " +
+                "developername VARCHAR(50) NOT NULL, " +
+                "password VARCHAR(50) NOT NULL, " +
                 "heat INT NOT NULL," +
                 "balance DOUBLE NOT NULL)";
         stmt.executeUpdate(sql);
 
         // 创建mods表
-        // mods(id, softwareId, userId, downloads, heat)
+        // mods(modId, softwareId, userId, downloads, heat)
         sql = "CREATE TABLE IF NOT EXISTS mods (" +
-                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "modId INT AUTO_INCREMENT PRIMARY KEY, " +
                 "softwareId INT NOT NULL, " +
                 "userId INT NOT NULL, " +
                 "downloads INT NOT NULL, " +
@@ -76,7 +78,7 @@ public class DBConnectClass {
         stmt.executeUpdate(sql);
 
         // 创建softwares表
-        // softwares(<u>id</u>, softwarename, developerId, downloads, heat)
+        // softwares(softwareId, softwarename, developerId, downloads, heat)
         sql = "CREATE TABLE IF NOT EXISTS softwares(" +
                 "id INT AUTO_INCREMENT PRIMARY KEY," +
                 "softwareName VARCHAR(50) NOT NULL," +
@@ -86,12 +88,10 @@ public class DBConnectClass {
         stmt.executeUpdate(sql);
     }
 
-    /**
-     * 用户登录
-     */
+    // user登陆
     public static boolean userLogin(String username, String password) throws SQLException {
         Statement stmt = con.createStatement();
-        String sql = "SELECT * FROM users WHERE username='" + username + "' AND userpassword='" + password + "'";
+        String sql = "SELECT * FROM users WHERE username='" + username + "' AND password='" + password + "'";
         ResultSet rs = stmt.executeQuery(sql);
         return rs.next();
     }
@@ -99,7 +99,7 @@ public class DBConnectClass {
     //developer登陆
     public static boolean developerLogin(String username, String password) throws SQLException {
         Statement stmt = con.createStatement();
-        String sql = "SELECT * FROM developers WHERE username='" + username + "' AND userpassword='" + password + "'";
+        String sql = "SELECT * FROM developers WHERE developername='" + username + "' AND password='" + password + "'";
         ResultSet rs = stmt.executeQuery(sql);
         return rs.next();
     }
@@ -107,7 +107,7 @@ public class DBConnectClass {
     //用户注册
     public static void userRegister(String username, String password) throws SQLException {
         Statement stmt = con.createStatement();
-        String sql = "INSERT INTO users (id,username,userpassword,Sbalance) VALUES (?,?,?,?)";
+        String sql = "INSERT INTO users (userId,username,password,balance) VALUES (?,?,?,?)";
         PreparedStatement pstmt = con.prepareStatement(sql);
         pstmt.setInt(1, 0);
         pstmt.setString(2, username);
