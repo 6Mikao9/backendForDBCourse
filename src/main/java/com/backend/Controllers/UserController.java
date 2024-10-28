@@ -9,7 +9,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 
-
 import java.sql.*;
 import java.util.*;
 
@@ -30,11 +29,11 @@ public class UserController {
         // 数据库中查询login
         String username = requestBody.get("username");
         String password = requestBody.get("password");
-        if(userLogin(username,password)) {
+        if (userLogin(username, password)) {
             map.put("token", "user");
-        }else if(developerLogin(username,password)) {
+        } else if (developerLogin(username, password)) {
             map.put("token", "developer");
-        }else {
+        } else {
             map.put("token", "error");
             return ResponseEntity.status(401).body(map);
         }
@@ -47,14 +46,8 @@ public class UserController {
         String username = requestBody.get("username");
         String password = requestBody.get("password");
         map.put("token", "user");
-        DBConnectClass.userRegister(username,password);
+        DBConnectClass.userRegister(username, password);
         System.out.println(requestBody);
         return ResponseEntity.ok(map);
     }
-
-
-
-
-
-
 }
