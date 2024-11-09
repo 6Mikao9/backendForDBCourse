@@ -6,7 +6,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -25,7 +24,28 @@ public class ImageController {
         System.out.println("imageName: " + imageName);
         try {
             // 从资源目录中加载图片
-            Resource resource = new ClassPathResource("static/images/" + imageName);
+            //Resource resource = new ClassPathResource("static/images/" + imageName);
+            Resource resource = new ClassPathResource("static/images/sbeam2.jpg");
+            Path path = Paths.get(resource.getURI());
+            byte[] imageData = Files.readAllBytes(path);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_TYPE, "image/png"); // 根据图片类型修改，例如 image/jpeg
+
+            return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/software_images/{software_id:.+}")
+    public ResponseEntity<byte[]> getSoftwareImage(@PathVariable String software_id) {
+        System.out.println("imageName: " + software_id);
+        try {
+            // 从资源目录中加载图片
+            //Resource resource = new ClassPathResource("static/images/" + imageName);
+            Resource resource = new ClassPathResource("static/images/sbeam2.jpg");
             Path path = Paths.get(resource.getURI());
             byte[] imageData = Files.readAllBytes(path);
 
