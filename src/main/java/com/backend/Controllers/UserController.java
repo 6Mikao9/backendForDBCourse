@@ -55,9 +55,15 @@ public class UserController {
         Map<String, String> map = new HashMap<>();
         String username = requestBody.get("username");
         String password = requestBody.get("password");
-        map.put("token", "user");
-        DBConnectClass.userRegister(username, password);
-        System.out.println(requestBody);
-        return ResponseEntity.ok(map);
+        String confirm = requestBody.get("confirm");
+
+
+        if (userRegister(username, password, confirm)) {
+            map.put("result", "SUC");
+            return ResponseEntity.ok(map);
+        } else {
+            map.put("result", "FAIL");
+            return ResponseEntity.status(401).body(map);
+        }
     }
 }

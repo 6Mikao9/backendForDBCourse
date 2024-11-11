@@ -106,14 +106,30 @@ public class DBConnectClass {
     }
 
     //用户注册
-    public static void userRegister(String username, String password) throws SQLException {
-        String sql = "INSERT INTO users (userId,username,password,balance) VALUES (?,?,?,?)";
+    public static boolean userRegister(String username, String password, String confirm) throws SQLException {
+        // 如果password与confirm不相同
+        if (!password.equals(confirm)) {
+            return false;
+        }
+
+        Statement stmt = con.createStatement();
+        String sql = "SELECT * FROM users WHERE username = '" + username + "'";
+        ResultSet rs = stmt.executeQuery(sql);
+
+        // 如果已经有相同的用户名
+        if (rs.next()) {
+            return false;
+        }
+
+        sql = "INSERT INTO users (userId,username,password,balance) VALUES (?,?,?,?)";
         PreparedStatement pstmt = con.prepareStatement(sql);
         pstmt.setInt(1, 0);
         pstmt.setString(2, username);
         pstmt.setString(3, password);
-        pstmt.setDouble(4, 10000);
+        // 默认新注册用户的余额balance为0
+        pstmt.setDouble(4, 0);
         pstmt.executeUpdate();
+        return true;
     }
 
     public static ArrayList<Map<String, String>> searchMod(String keyword) throws SQLException {
