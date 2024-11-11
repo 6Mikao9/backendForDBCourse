@@ -23,18 +23,28 @@ public class UserController {
     private TrainingDataService trainingDataService;
 
     // user和developer均可通过此接口登录
-    @PostMapping("/login")
+    /*
+    请求体参数
+    username String
+    password String
+
+    响应
+    type 用户类型
+    userId 用户Id
+     */
+    @GetMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> requestBody) throws SQLException {
         Map<String, String> map = new HashMap<>();
         // 数据库中查询login
         String username = requestBody.get("username");
         String password = requestBody.get("password");
-        if (userLogin(username, password)) {
-            map.put("token", "user");
-        } else if (developerLogin(username, password)) {
-            map.put("token", "developer");
+        if (userLogin(username, password) != -1) {
+            map.put("type", "user");
+            map.put("userId", String.valueOf(userLogin(username, password)));
+        } else if (developerLogin(username, password) != -1) {
+            map.put("type", "developer");
+            map.put("userId", String.valueOf(developerLogin(username, password)));
         } else {
-            map.put("token", "error");
             return ResponseEntity.status(401).body(map);
         }
         return ResponseEntity.ok(map);

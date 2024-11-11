@@ -81,19 +81,28 @@ public class DBConnectClass {
     }
 
     // user登陆
-    public static boolean userLogin(String username, String password) throws SQLException {
+    public static int userLogin(String username, String password) throws SQLException {
         Statement stmt = con.createStatement();
-        String sql = "SELECT * FROM users WHERE username='" + username + "' AND password='" + password + "'";
+        String sql = "SELECT userId FROM users WHERE username='" + username + "' AND password='" + password + "'";
         ResultSet rs = stmt.executeQuery(sql);
-        return rs.next();
+        Integer userId = -1;
+        if (rs.next()) {
+            userId = rs.getInt("userId");
+        }
+        return userId;
     }
 
     //developer登陆
-    public static boolean developerLogin(String username, String password) throws SQLException {
+    public static int developerLogin(String username, String password) throws SQLException {
         Statement stmt = con.createStatement();
-        String sql = "SELECT * FROM developers WHERE developername='" + username + "' AND password='" + password + "'";
+        String sql = "SELECT developerId FROM developers WHERE developername='" + username + "' AND password='" + password + "'";
         ResultSet rs = stmt.executeQuery(sql);
-        return rs.next();
+        // 如果返回-1，则意味着在develoers表中没有找到对应的name和password
+        Integer developerId = -1;
+        if (rs.next()) {
+            developerId = rs.getInt("developerId");
+        }
+        return developerId;
     }
 
     //用户注册

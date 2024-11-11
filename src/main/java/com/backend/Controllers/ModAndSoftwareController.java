@@ -32,11 +32,9 @@ public class ModAndSoftwareController {
         if (file.isEmpty()){
             return ResponseEntity.status(400).body("文件不能为空");
         }
-        System.out.println("AAA");
         Files.createDirectories(rootLocation);
         Path destinationFile = rootLocation.resolve(Paths.get(modname));
         file.transferTo(destinationFile);
-        System.out.println("AAA");
         return ResponseEntity.ok("文件上传成功，保存路径："+destinationFile.toString());
     }
 
