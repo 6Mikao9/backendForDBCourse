@@ -59,23 +59,25 @@ public class DBConnectClass {
         stmt.executeUpdate(sql);
 
         // 创建mods表
-        // mods(modId, modname, softwareId, userId, downloads, heat, filepath)
+        // mods(modId, modname, softwareId, userId, price, downloads, heat, filepath)
         sql = "CREATE TABLE IF NOT EXISTS mods (" +
                 "modId INT AUTO_INCREMENT PRIMARY KEY, " +
                 "modname VARCHAR(50) NOT NULL ," +
                 "softwareId INT NOT NULL, " +
                 "userId INT NOT NULL, " +
+                "price INT NOT NULL," +
                 "downloads INT NOT NULL, " +
                 "heat INT NOT NULL, " +
                 "filepath VARCHAR(100) NOT NULL)";
         stmt.executeUpdate(sql);
 
         // 创建softwares表
-        // softwares(softwareId, softwarename, developerId, downloads, heat, filepath)
+        // softwares(softwareId, softwarename, developerId, price, downloads, heat, filepath)
         sql = "CREATE TABLE IF NOT EXISTS softwares(" +
                 "softwareId INT AUTO_INCREMENT PRIMARY KEY," +
                 "softwareName VARCHAR(50) NOT NULL," +
                 "developerId INT NOT NULL," +
+                "price INT NOT NULL," +
                 "downloads INT NOT NULL, " +
                 "heat INT NOT NULL, " +
                 "filepath VARCHAR(100) NOT NULL)";
@@ -184,7 +186,7 @@ public class DBConnectClass {
             return false;
         }
 
-        sql = "INSERT INTO mods (modId, modname, softwareId, userId, downloads, heat, filepath) VALUES (?,?,?,?,?,?,?)";
+        sql = "INSERT INTO mods (modId, modname, softwareId, userId, price, downloads, heat, filepath) VALUES (?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = con.prepareStatement(sql);
         // modId会自动升序
         pstmt.setInt(1, 0);
@@ -194,20 +196,24 @@ public class DBConnectClass {
         // 对于新上传的mod，downloads和heat均设置为0
         pstmt.setInt(5, 0);
         pstmt.setInt(6, 0);
-        pstmt.setString(7, path);
+        pstmt.setInt(7, 0);
+        pstmt.setString(8, path);
+
         pstmt.executeUpdate();
         return true;
     }
 
     public static boolean developerUploadSoftware(int developerId, String softwarename, String path) throws SQLException {
-        String sql = "INSERT INTO softwares (softwareId, softwarename, developerId, downloads, heat, filepath) VALUES (?,?,?,?,?,?)";
+        String sql = "INSERT INTO softwares (softwareId, softwarename, developerId, price, downloads, heat, filepath) VALUES (?,?,?,?,?,?,?)";
         PreparedStatement pstmt = con.prepareStatement(sql);
         pstmt.setInt(1, 0);
         pstmt.setString(2, softwarename);
         pstmt.setInt(3, developerId);
         pstmt.setInt(4, 0);
         pstmt.setInt(5, 0);
-        pstmt.setString(6, path);
+        pstmt.setInt(6, 0);
+        ;
+        pstmt.setString(7, path);
         pstmt.executeUpdate();
         return true;
     }
@@ -241,7 +247,7 @@ public class DBConnectClass {
     }
 
     public static boolean userAddCart(int userId, int softwareId) throws SQLException {
-        String sql = "SELECT * FROM carts WHERE userId = '" + userId + "' AND softwareId ='" + softwareId + "'";
+        String sql = "SELECT * FROM carts WHERE userId = " + userId + " AND softwareId =" + softwareId;
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         // 说明用户之前已经将该software加入到购物车中
@@ -273,10 +279,69 @@ public class DBConnectClass {
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         String softwarename = "";
-        if (rs.next()){
+        if (rs.next()) {
             softwarename = rs.getString("softwarename");
         }
         return softwarename;
+    }
+
+    public static int searchSoftwarePriceById(int softwareId) throws SQLException {
+        String sql = "SELECT price FROM softwares WHERE softwareId = '" + softwareId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        int price = -1;
+        if (rs.next()) {
+            price = rs.getInt("price");
+        }
+        return price;
+    }
+
+    public static String searchUsernameById(int userId) throws SQLException {
+        String sql = "SELECT username FROM users WHERE userId = '" + userId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        String username = "";
+        if (rs.next()) {
+            username = rs.getString("username");
+        }
+        return username;
+    }
+
+    public static int searchUserBalanceById(int userId) throws SQLException {
+        String sql = "SELECT balance FROM users WHERE userId = '" + userId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        int balance = -1;
+        if (rs.next()) {
+            balance = rs.getInt("balance");
+        }
+        return balance;
+    }
+
+    public static ArrayList<Map<String, Object>> searchUserCartsById(int userId) throws SQLException {
+        String sql = "SELECT softwareId FROM carts WHERE userId = '" + userId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        ArrayList<Integer> softwaresId = new ArrayList<>();
+        while (rs.next()) {
+            softwaresId.add(rs.getInt("softwareId"));
+        }
+
+        ArrayList<Map<String, Object>> carts = new ArrayList<>();
+        for (int i = 0; i < softwaresId.size(); i++) {
+            int softwareId = softwaresId.get(i);
+            String softwarename = searchSoftwarenameById(softwareId);
+            int price = searchSoftwarePriceById(softwareId);
+            Map<String, Object> map = new HashMap();
+            map.put("softwarename", softwarename);
+            map.put("price", price);
+            map.put("softwareId", softwareId);
+            carts.add(map);
+        }
+        return carts;
     }
 
 

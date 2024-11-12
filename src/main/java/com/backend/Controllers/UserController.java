@@ -2,6 +2,7 @@ package com.backend.Controllers;
 
 import com.backend.Utils.DBConnectClass;
 import com.backend.service.TrainingDataService;
+import com.mongodb.DB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -118,6 +119,24 @@ public class UserController {
         } else {
             return ResponseEntity.status(414).build();
         }
+    }
 
+    @GetMapping("/status")
+    public ResponseEntity<?> status(@RequestParam("userId") int userId) throws SQLException{
+        Map<String, Object> map = new HashMap<>();
+
+        String username = DBConnectClass.searchUsernameById(userId);
+        int balance = DBConnectClass.searchUserBalanceById(userId);
+        // 说明未找到
+        if (username.isEmpty() || balance == -1){
+            return ResponseEntity.notFound().build();
+        }
+        ArrayList<Map<String, Object>> carts = DBConnectClass.searchUserCartsById(userId);
+
+        map.put("username", username);
+        map.put("balance", balance);
+        map.put("cart", carts);
+
+        return ResponseEntity.ok(map);
     }
 }
