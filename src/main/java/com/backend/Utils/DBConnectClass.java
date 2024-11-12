@@ -59,24 +59,26 @@ public class DBConnectClass {
         stmt.executeUpdate(sql);
 
         // 创建mods表
-        // mods(modId, modname, softwareId, userId, downloads, heat)
+        // mods(modId, modname, softwareId, userId, downloads, heat, filepath)
         sql = "CREATE TABLE IF NOT EXISTS mods (" +
                 "modId INT AUTO_INCREMENT PRIMARY KEY, " +
                 "modname VARCHAR(50) NOT NULL ," +
                 "softwareId INT NOT NULL, " +
                 "userId INT NOT NULL, " +
                 "downloads INT NOT NULL, " +
-                "heat INT NOT NULL)";
+                "heat INT NOT NULL, " +
+                "filepath VARCHAR(100) NOT NULL)";
         stmt.executeUpdate(sql);
 
         // 创建softwares表
-        // softwares(softwareId, softwarename, developerId, downloads, heat)
+        // softwares(softwareId, softwarename, developerId, downloads, heat, filepath)
         sql = "CREATE TABLE IF NOT EXISTS softwares(" +
                 "softwareId INT AUTO_INCREMENT PRIMARY KEY," +
                 "softwareName VARCHAR(50) NOT NULL," +
                 "developerId INT NOT NULL," +
                 "downloads INT NOT NULL, " +
-                "heat INT NOT NULL)";
+                "heat INT NOT NULL, " +
+                "filepath VARCHAR(100) NOT NULL)";
         stmt.executeUpdate(sql);
     }
 
@@ -174,7 +176,7 @@ public class DBConnectClass {
             return false;
         }
 
-        sql = "INSERT INTO mods (modId, modname, softwareId, userId, downloads, heat) VALUES (?,?,?,?,?,?)";
+        sql = "INSERT INTO mods (modId, modname, softwareId, userId, downloads, heat, filepath) VALUES (?,?,?,?,?,?,?)";
         PreparedStatement pstmt = con.prepareStatement(sql);
         // modId会自动升序
         pstmt.setInt(1, 0);
@@ -184,6 +186,20 @@ public class DBConnectClass {
         // 对于新上传的mod，downloads和heat均设置为0
         pstmt.setInt(5, 0);
         pstmt.setInt(6, 0);
+        pstmt.setString(7, path);
+        pstmt.executeUpdate();
+        return true;
+    }
+
+    public static boolean developerUploadSoftware(int developerId, String softwarename, String path) throws SQLException {
+        String sql = "INSERT INTO softwares (softwareId, softwarename, developerId, downloads, heat, filepath) VALUES (?,?,?,?,?,?)";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setInt(1, 0);
+        pstmt.setString(2, softwarename);
+        pstmt.setInt(3, developerId);
+        pstmt.setInt(4, 0);
+        pstmt.setInt(5, 0);
+        pstmt.setString(6, path);
         pstmt.executeUpdate();
         return true;
     }

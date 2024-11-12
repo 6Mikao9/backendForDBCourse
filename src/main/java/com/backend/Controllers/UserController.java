@@ -25,7 +25,7 @@ public class UserController {
     TrainingDataService trainingDataService;
 
     // 文件存储路径
-    private final Path rootLocation = Paths.get("uploads");
+    private final Path rootLocation = Paths.get("mods");
 
     @PostMapping("/upload_mod")
     public ResponseEntity<Map<String, String>> uploadMod(@RequestParam("uploader_id") int userId, @RequestParam("file_name") String modname, @RequestParam("file") MultipartFile file, @RequestParam("softwarename") String softwarename) throws SQLException, IOException {
@@ -34,6 +34,13 @@ public class UserController {
             map.put("result", "FAIL");
             return ResponseEntity.status(414).body(map);
         }
+
+        // 不允许modname为空
+        if (modname.isEmpty()){
+            map.put("result", "FAIL");
+            return ResponseEntity.status(414).body(map);
+        }
+
         Files.createDirectories(rootLocation);
         Path destinationFile = rootLocation.resolve(Paths.get(modname));
         file.transferTo(destinationFile);
