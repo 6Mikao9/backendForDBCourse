@@ -80,6 +80,14 @@ public class DBConnectClass {
                 "heat INT NOT NULL, " +
                 "filepath VARCHAR(100) NOT NULL)";
         stmt.executeUpdate(sql);
+
+        // 创建carts表
+        // cart(userId, softwareId)
+        sql = "CREATE TABLE IF NOT EXISTS carts(" +
+                "userId INT ," +
+                "softwareId INT ," +
+                "PRIMARY KEY (userId, softwareId) )";
+        stmt.executeUpdate(sql);
     }
 
     // user登陆
@@ -230,6 +238,23 @@ public class DBConnectClass {
             results.add(map);
         }
         return results;
+    }
+
+    public static boolean userAddCart(int userId, int softwareId) throws SQLException{
+        String sql = "SELECT * FROM carts WHERE userId = '" + userId + "' AND softwareId ='" + softwareId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        // 说明用户之前已经将该software加入到购物车中
+        if (rs.next()){
+            return false;
+        }
+
+        sql = "INSERT INTO carts (userId, softwareId) VALUES (?,?)";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setInt(1, userId);
+        pstmt.setInt(2, softwareId);
+        pstmt.executeUpdate();
+        return true;
     }
 
     public static void test() throws SQLException {

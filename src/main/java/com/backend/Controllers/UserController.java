@@ -1,5 +1,6 @@
 package com.backend.Controllers;
 
+import com.backend.Utils.DBConnectClass;
 import com.backend.service.TrainingDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class UserController {
         }
 
         // 不允许modname为空
-        if (modname.isEmpty()){
+        if (modname.isEmpty()) {
             map.put("result", "FAIL");
             return ResponseEntity.status(414).body(map);
         }
@@ -54,9 +55,6 @@ public class UserController {
         }
     }
 
-//    @PostMapping
-//    public ResponseEntity<Map<String, String>> uploadSoftware(@RequestParam("uploader_id"))
-
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestBody Map<String, String> requestBody) throws SQLException {
         String keyword = requestBody.get("keyword");
@@ -70,4 +68,22 @@ public class UserController {
         result.put("mods", modsList);
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/addCart")
+    public ResponseEntity<Map<String, String>> addCart(@RequestBody Map<String, Integer> requestBody) throws SQLException {
+        Map<String, String> map = new HashMap<>();
+
+        int userId = requestBody.get("userId");
+        int softwareId = requestBody.get("softwareId");
+
+        if (DBConnectClass.userAddCart(userId, softwareId)) {
+            map.put("result", "SUC");
+            return ResponseEntity.ok(map);
+        } else {
+            map.put("result", "FAIL");
+            return ResponseEntity.status(414).body(map);
+        }
+    }
+
+
 }
