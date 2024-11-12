@@ -212,7 +212,7 @@ public class DBConnectClass {
         return true;
     }
 
-    public static ArrayList<Map<String, String>> searchMod(String keyword) throws SQLException {
+    public static ArrayList<Map<String, String>> searchModsByName(String keyword) throws SQLException {
         ArrayList<Map<String, String>> results = new ArrayList<>();
         String sql = "SELECT modId FROM mods WHERE modname='" + keyword + "'";
         PreparedStatement pstmt = con.prepareStatement(sql);
@@ -226,7 +226,7 @@ public class DBConnectClass {
         return results;
     }
 
-    public static ArrayList<Map<String, String>> searchSoftware(String keyword) throws SQLException {
+    public static ArrayList<Map<String, String>> searchSoftwaresByName(String keyword) throws SQLException {
         ArrayList<Map<String, String>> results = new ArrayList<>();
         String sql = "SELECT softwareId FROM softwares WHERE softwarename='" + keyword + "'";
         PreparedStatement pstmt = con.prepareStatement(sql);
@@ -240,12 +240,12 @@ public class DBConnectClass {
         return results;
     }
 
-    public static boolean userAddCart(int userId, int softwareId) throws SQLException{
+    public static boolean userAddCart(int userId, int softwareId) throws SQLException {
         String sql = "SELECT * FROM carts WHERE userId = '" + userId + "' AND softwareId ='" + softwareId + "'";
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         // 说明用户之前已经将该software加入到购物车中
-        if (rs.next()){
+        if (rs.next()) {
             return false;
         }
 
@@ -256,6 +256,29 @@ public class DBConnectClass {
         pstmt.executeUpdate();
         return true;
     }
+
+    public static String searchModnameById(int modId) throws SQLException {
+        String sql = "SELECT modname FROM mods WHERE modId = '" + modId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        String modname = "";
+        if (rs.next()) {
+            modname = rs.getString("modname");
+        }
+        return modname;
+    }
+
+    public static String searchSoftwarenameById(int softwareId) throws SQLException {
+        String sql = "SELECT softwarename FROM softwares WHERE softwareId = '" + softwareId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        String softwarename = "";
+        if (rs.next()){
+            softwarename = rs.getString("softwarename");
+        }
+        return softwarename;
+    }
+
 
     public static void test() throws SQLException {
         System.out.println("initialize");

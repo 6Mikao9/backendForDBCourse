@@ -3,11 +3,14 @@ package com.backend.Controllers;
 import com.backend.Utils.DBConnectClass;
 import com.backend.service.TrainingDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,9 +28,6 @@ public class UserController {
     @Autowired
     TrainingDataService trainingDataService;
 
-    // 文件存储路径
-    private final Path rootLocation = Paths.get("mods");
-
     @PostMapping("/upload_mod")
     public ResponseEntity<Map<String, String>> uploadMod(@RequestParam("uploader_id") int userId, @RequestParam("file_name") String modname, @RequestParam("file") MultipartFile file, @RequestParam("softwarename") String softwarename) throws SQLException, IOException {
         Map<String, String> map = new HashMap<>();
@@ -41,7 +41,7 @@ public class UserController {
             map.put("result", "FAIL");
             return ResponseEntity.status(414).body(map);
         }
-
+        Path rootLocation = Paths.get("mods");
         Files.createDirectories(rootLocation);
         Path destinationFile = rootLocation.resolve(Paths.get(modname));
         file.transferTo(destinationFile);
@@ -61,8 +61,8 @@ public class UserController {
 
         Map<String, ArrayList> result = new HashMap<>();
 
-        ArrayList<Map<String, String>> softwaresList = searchSoftware(keyword);
-        ArrayList<Map<String, String>> modsList = searchMod(keyword);
+        ArrayList<Map<String, String>> softwaresList = searchSoftwaresByName(keyword);
+        ArrayList<Map<String, String>> modsList = searchModsByName(keyword);
 
         result.put("softwares", softwaresList);
         result.put("mods", modsList);
@@ -85,5 +85,39 @@ public class UserController {
         }
     }
 
+    @GetMapping("/download")
+    public ResponseEntity<Resource> download(@RequestParam("type") String type, @RequestParam("id") int id) throws SQLException, MalformedURLException {
 
+        if (type.equals("software")) {
+            String softwarename = DBConnectClass.searchSoftwarenameById(id);
+            if (softwarename.isEmpty()) {
+                return ResponseEntity.status(414).build();
+            }
+            Path rootLocation = Paths.get("softwares");
+            Path filepath = rootLocation.resolve(Paths.get(softwarename)).normalize();
+            Resource resource = new UrlResource(filepath.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok(resource);
+            } else {
+                return ResponseEntity.status(414).build();
+            }
+        } else if (type.equals("mod")) {
+            String modname = DBConnectClass.searchModnameById(id);
+            // modname为空，说明该modId不存在
+            if (modname.isEmpty()) {
+                return ResponseEntity.status(414).build();
+            }
+            Path rootLocation = Paths.get("mods");
+            Path filepath = rootLocation.resolve(Paths.get(modname)).normalize();
+            Resource resource = new UrlResource(filepath.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok(resource);
+            }else {
+                return ResponseEntity.status(414).build();
+            }
+        } else {
+            return ResponseEntity.status(414).build();
+        }
+
+    }
 }
