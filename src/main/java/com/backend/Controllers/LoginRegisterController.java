@@ -44,17 +44,35 @@ public class LoginRegisterController {
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody Map<String, String> requestBody) throws SQLException {
         Map<String, String> map = new HashMap<>();
+        String type = requestBody.get("type");
         String username = requestBody.get("username");
         String password = requestBody.get("password");
         String confirm = requestBody.get("confirm");
 
-
-        if (userRegister(username, password, confirm)) {
-            map.put("result", "SUC");
-            return ResponseEntity.ok(map);
-        } else {
+        if (type.equals("user")) {
+            if (userRegister(username, password, confirm)) {
+                map.put("result", "SUC");
+                return ResponseEntity.ok(map);
+            } else {
+                map.put("result", "FAIL");
+                return ResponseEntity.status(414).body(map);
+            }
+        } else if (type.equals("developer")){
+            if (developerRegister(username, password, confirm)) {
+                map.put("result", "SUC");
+                return ResponseEntity.ok(map);
+            } else {
+                map.put("result", "FAIL");
+                return ResponseEntity.status(414).body(map);
+            }
+        }
+        // 如果type不对应，则失败
+        else {
             map.put("result", "FAIL");
             return ResponseEntity.status(414).body(map);
         }
+
+
+
     }
 }

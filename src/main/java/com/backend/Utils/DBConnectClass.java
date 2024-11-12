@@ -132,16 +132,42 @@ public class DBConnectClass {
         return true;
     }
 
+    public static boolean developerRegister(String developername, String password, String confirm) throws SQLException {
+        if (!password.equals(confirm)) {
+            return false;
+        }
+
+        Statement stmt = con.createStatement();
+        String sql = "SELECT * FROM developers WHERE developername = '" + developername + "'";
+        ResultSet rs = stmt.executeQuery(sql);
+
+        if (rs.next()) {
+            return false;
+        }
+
+        sql = "INSERT INTO developers (developerId, developername, password, heat, balance) VALUES (?,?,?,?,?)";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        // developerId会自动递增
+        pstmt.setInt(1, 0);
+        pstmt.setString(2, developername);
+        pstmt.setString(3, password);
+        // 默认新注册的developer的heat和balance均为0
+        pstmt.setInt(4, 0);
+        pstmt.setInt(5, 0);
+        pstmt.executeUpdate();
+        return true;
+    }
+
     // 每个mod都会唯一对应一个software
     // 一个mod可以多次上传，而且会被分配不同的modId
-    public static boolean userUploadMod(int userId, String modname, String path, String softwarename) throws SQLException{
+    public static boolean userUploadMod(int userId, String modname, String path, String softwarename) throws SQLException {
         String sql = "SELECT softwareId FROM softwares WHERE softwarename = '" + softwarename + "'";
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
 
         int softwareId;
-        if (rs.next()){
-             softwareId = rs.getInt("softwareId");
+        if (rs.next()) {
+            softwareId = rs.getInt("softwareId");
         }
         // mod对应的软件不存在
         else {
