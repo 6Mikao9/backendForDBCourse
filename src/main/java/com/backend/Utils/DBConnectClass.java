@@ -132,6 +132,36 @@ public class DBConnectClass {
         return true;
     }
 
+    // 每个mod都会唯一对应一个software
+    // 一个mod可以多次上传，而且会被分配不同的modId
+    public static boolean userUploadMod(int userId, String modname, String path, String softwarename) throws SQLException{
+        String sql = "SELECT softwareId FROM softwares WHERE softwarename = '" + softwarename + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        int softwareId;
+        if (rs.next()){
+             softwareId = rs.getInt("softwareId");
+        }
+        // mod对应的软件不存在
+        else {
+            return false;
+        }
+
+        sql = "INSERT INTO mods (modId, modname, softwareId, userId, downloads, heat) VALUES (?,?,?,?,?,?)";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        // modId会自动升序
+        pstmt.setInt(1, 0);
+        pstmt.setString(2, modname);
+        pstmt.setInt(3, softwareId);
+        pstmt.setInt(4, userId);
+        // 对于新上传的mod，downloads和heat均设置为0
+        pstmt.setInt(5, 0);
+        pstmt.setInt(6, 0);
+        pstmt.executeUpdate();
+        return true;
+    }
+
     public static ArrayList<Map<String, String>> searchMod(String keyword) throws SQLException {
         ArrayList<Map<String, String>> results = new ArrayList<>();
         String sql = "SELECT modId FROM mods WHERE modname='" + keyword + "'";
@@ -151,7 +181,6 @@ public class DBConnectClass {
         String sql = "SELECT softwareId FROM softwares WHERE softwarename='" + keyword + "'";
         PreparedStatement pstmt = con.prepareStatement(sql);
         ResultSet rs = pstmt.executeQuery();
-        System.out.println("AAA");
         while (rs.next()) {
             Integer softwareId = rs.getInt("softwareId");
             Map map = new HashMap();

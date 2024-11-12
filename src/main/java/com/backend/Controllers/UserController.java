@@ -45,7 +45,7 @@ public class UserController {
             map.put("type", "developer");
             map.put("userId", String.valueOf(developerLogin(username, password)));
         } else {
-            return ResponseEntity.status(401).body(map);
+            return ResponseEntity.status(414).body(map);
         }
         return ResponseEntity.ok(map);
     }
@@ -63,7 +63,7 @@ public class UserController {
             return ResponseEntity.ok(map);
         } else {
             map.put("result", "FAIL");
-            return ResponseEntity.status(401).body(map);
+            return ResponseEntity.status(414).body(map);
         }
     }
 }

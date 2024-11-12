@@ -28,21 +28,34 @@ public class ModAndSoftwareController {
     private final Path rootLocation = Paths.get("uploads");
 
     @PostMapping("/upload_mod")
-    public ResponseEntity<?> uploadMod(@RequestParam("uploader_id")int userId, @RequestParam("file_name") String modname, @RequestParam("file") MultipartFile file) throws SQLException, IOException {
-        if (file.isEmpty()){
-            return ResponseEntity.status(400).body("文件不能为空");
+    public ResponseEntity<Map<String, String>> uploadMod(@RequestParam("uploader_id") int userId, @RequestParam("file_name") String modname, @RequestParam("file") MultipartFile file, @RequestParam("softwarename") String softwarename) throws SQLException, IOException {
+        Map<String, String> map = new HashMap<>();
+        if (file.isEmpty()) {
+            map.put("result", "FAIL");
+            return ResponseEntity.status(414).body(map);
         }
         Files.createDirectories(rootLocation);
         Path destinationFile = rootLocation.resolve(Paths.get(modname));
         file.transferTo(destinationFile);
-        return ResponseEntity.ok("文件上传成功，保存路径："+destinationFile.toString());
+
+        if (userUploadMod(userId, modname, destinationFile.toString(), softwarename)) {
+            map.put("result", "SUC");
+            return ResponseEntity.ok(map);
+        } else {
+            map.put("result", "FAIL");
+            return ResponseEntity.status(414).body(map);
+        }
     }
 
-    @PostMapping("/search")
+//    @PostMapping
+//    public ResponseEntity<Map<String, String>> uploadSoftware(@RequestParam("uploader_id"))
+
+    @GetMapping("/search")
     public ResponseEntity<?> search(@RequestBody Map<String, String> requestBody) throws SQLException {
+        String keyword = requestBody.get("keyword");
+
         Map<String, ArrayList> result = new HashMap<>();
 
-        String keyword = requestBody.get("keyword");
         ArrayList<Map<String, String>> softwaresList = searchSoftware(keyword);
         ArrayList<Map<String, String>> modsList = searchMod(keyword);
 
