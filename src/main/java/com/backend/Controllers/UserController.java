@@ -1,69 +1,66 @@
 package com.backend.Controllers;
 
-import com.backend.Utils.*;
-import com.backend.service.*;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.http.*;
+import com.backend.service.TrainingDataService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.backend.Utils.DBConnectClass.*;
 
 @RestController
-@Slf4j
-@RequestMapping("/api")
+@RequestMapping("api/user")
+
 public class UserController {
-
     @Autowired
-    private TrainingDataService trainingDataService;
+    TrainingDataService trainingDataService;
 
-    // user和developer均可通过此接口登录
-    /*
-    请求体参数
-    username String
-    password String
+    // 文件存储路径
+    private final Path rootLocation = Paths.get("uploads");
 
-    响应
-    type 用户类型
-    userId 用户Id
-     */
-    @GetMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> requestBody) throws SQLException {
+    @PostMapping("/upload_mod")
+    public ResponseEntity<Map<String, String>> uploadMod(@RequestParam("uploader_id") int userId, @RequestParam("file_name") String modname, @RequestParam("file") MultipartFile file, @RequestParam("softwarename") String softwarename) throws SQLException, IOException {
         Map<String, String> map = new HashMap<>();
-        // 数据库中查询login
-        String username = requestBody.get("username");
-        String password = requestBody.get("password");
-        if (userLogin(username, password) != -1) {
-            map.put("type", "user");
-            map.put("userId", String.valueOf(userLogin(username, password)));
-        } else if (developerLogin(username, password) != -1) {
-            map.put("type", "developer");
-            map.put("userId", String.valueOf(developerLogin(username, password)));
-        } else {
+        if (file.isEmpty()) {
+            map.put("result", "FAIL");
             return ResponseEntity.status(414).body(map);
         }
-        return ResponseEntity.ok(map);
-    }
+        Files.createDirectories(rootLocation);
+        Path destinationFile = rootLocation.resolve(Paths.get(modname));
+        file.transferTo(destinationFile);
 
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody Map<String, String> requestBody) throws SQLException {
-        Map<String, String> map = new HashMap<>();
-        String username = requestBody.get("username");
-        String password = requestBody.get("password");
-        String confirm = requestBody.get("confirm");
-
-
-        if (userRegister(username, password, confirm)) {
+        if (userUploadMod(userId, modname, destinationFile.toString(), softwarename)) {
             map.put("result", "SUC");
             return ResponseEntity.ok(map);
         } else {
             map.put("result", "FAIL");
             return ResponseEntity.status(414).body(map);
         }
+    }
+
+//    @PostMapping
+//    public ResponseEntity<Map<String, String>> uploadSoftware(@RequestParam("uploader_id"))
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestBody Map<String, String> requestBody) throws SQLException {
+        String keyword = requestBody.get("keyword");
+
+        Map<String, ArrayList> result = new HashMap<>();
+
+        ArrayList<Map<String, String>> softwaresList = searchSoftware(keyword);
+        ArrayList<Map<String, String>> modsList = searchMod(keyword);
+
+        result.put("softwares", softwaresList);
+        result.put("mods", modsList);
+        return ResponseEntity.ok(result);
     }
 }
