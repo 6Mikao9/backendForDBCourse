@@ -322,7 +322,7 @@ public class DBConnectClass {
     }
 
     public static ArrayList<Map<String, Object>> searchUserCartsById(int userId) throws SQLException {
-        String sql = "SELECT softwareId FROM carts WHERE userId = '" + userId + "'";
+        String sql = "SELECT softwareId FROM carts WHERE userId = " + userId;
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         ArrayList<Integer> softwaresId = new ArrayList<>();
@@ -342,6 +342,30 @@ public class DBConnectClass {
             carts.add(map);
         }
         return carts;
+    }
+
+    public static String searchDevelopernameById(int developerId) throws SQLException {
+        String sql = "SELECT developername FROM developers WHERE developerId = " + developerId;
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        String developername = "";
+        if (rs.next()) {
+            developername = rs.getString("developername");
+        }
+        return developername;
+    }
+
+    public static int searchDeveloperBalanceById(int developerId) throws SQLException {
+        String sql = "SELECT balance FROM developers WHERE developerId = " + developerId;
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        int balance = -1;
+        if (rs.next()) {
+            balance = rs.getInt("balance");
+        }
+        return balance;
     }
 
 
