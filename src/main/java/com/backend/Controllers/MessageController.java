@@ -43,4 +43,12 @@ public class MessageController {
         }
     }
 
+    @PostMapping("/delete")
+    public ResponseEntity<Map<String, String>> delete(@RequestParam("messageId") int messageId) throws SQLException {
+        Map<String, String> map = new HashMap<>();
+        DBConnectClass.deleteMessage(messageId);
+        map.put("result", "SUC");
+        return ResponseEntity.ok(map);
+    }
+
 }

@@ -421,6 +421,12 @@ public class DBConnectClass {
         return true;
     }
 
+    public static void deleteMessage(int messageId) throws SQLException {
+        String sql = "DELETE FROM messages WHERE messageId = " + messageId;
+        Statement stmt = con.createStatement();
+        stmt.executeUpdate(sql);
+    }
+
 
     public static void test() throws SQLException {
         System.out.println("initialize");
