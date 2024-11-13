@@ -90,6 +90,15 @@ public class DBConnectClass {
                 "softwareId INT ," +
                 "PRIMARY KEY (userId, softwareId) )";
         stmt.executeUpdate(sql);
+
+        // 创建message表
+        // message(messageId, sendId, receiveId, content)
+        sql = "CREATE TABLE IF NOT EXISTS messages(" +
+                "messageId INT AUTO_INCREMENT PRIMARY KEY," +
+                "sendId INT NOT NULL," +
+                "receiveId INT NOT NULL," +
+                "content VARCHAR(500) NOT NULL)";
+        stmt.executeUpdate(sql);
     }
 
     // user登陆
@@ -366,6 +375,33 @@ public class DBConnectClass {
             balance = rs.getInt("balance");
         }
         return balance;
+    }
+
+    public static boolean sendMessage(int sendId, int receiveId, String content) throws SQLException {
+        String sql = "SELECT * FROM users WHERE userId = " + sendId;
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        // 如果没有找到发送者
+        if (!rs.next()) {
+            return false;
+        }
+
+        sql = "SELECT * FROM users WHERE userId = " + receiveId;
+        rs = stmt.executeQuery(sql);
+        // 如果没有找到接收者
+        if (!rs.next()) {
+            return false;
+        }
+
+        sql = "INSERT INTO messages (messageId, sendId, receiveId, content) VALUES (?,?,?,?)";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        // messageId会自动递增
+        pstmt.setInt(1,0);
+        pstmt.setInt(2, sendId);
+        pstmt.setInt(3, receiveId);
+        pstmt.setString(4, content);
+        pstmt.executeUpdate();
+        return true;
     }
 
 
