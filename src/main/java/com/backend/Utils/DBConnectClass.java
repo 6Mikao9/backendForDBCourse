@@ -306,6 +306,30 @@ public class DBConnectClass {
         return price;
     }
 
+    public static int searchDownloadsById(int softwareId) throws SQLException{
+        String sql = "SELECT downloads FROM softwares WHERE softwareId = '" + softwareId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        int downloads = -1;
+        if (rs.next()) {
+            downloads = rs.getInt("downloads");
+        }
+        return downloads;
+    }
+
+    public static int searchDeveloperIdById(int softwareId) throws SQLException{
+        String sql = "SELECT developerId FROM softwares WHERE softwareId = '" + softwareId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        int developerId = -1;
+        if (rs.next()) {
+            developerId = rs.getInt("developerId");
+        }
+        return developerId;
+    }
+
     public static String searchUsernameById(int userId) throws SQLException {
         String sql = "SELECT username FROM users WHERE userId = '" + userId + "'";
         Statement stmt = con.createStatement();
@@ -425,6 +449,24 @@ public class DBConnectClass {
         String sql = "DELETE FROM messages WHERE messageId = " + messageId;
         Statement stmt = con.createStatement();
         stmt.executeUpdate(sql);
+    }
+
+    public static Map<String, Object> detailsSoftware(int softwareId) throws SQLException {
+        Map<String, Object> map = new HashMap<>();
+        String softwarename = searchSoftwarenameById(softwareId);
+        map.put("softwarename", softwarename);
+
+        int price = searchSoftwarePriceById(softwareId);
+        map.put("price", price);
+
+        int downloads = searchDownloadsById(softwareId);
+        map.put("downloads", downloads);
+
+        int developerId = searchDeveloperIdById(softwareId);
+        String developername = searchDevelopernameById(developerId);
+        map.put("developername", developername);
+
+        return map;
     }
 
 
