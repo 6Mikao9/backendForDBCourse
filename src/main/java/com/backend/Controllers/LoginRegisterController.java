@@ -5,10 +5,17 @@ import com.backend.service.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.*;
 
@@ -58,7 +65,7 @@ public class LoginRegisterController {
                 map.put("result", "FAIL");
                 return ResponseEntity.status(414).body(map);
             }
-        } else if (type.equals("developer")){
+        } else if (type.equals("developer")) {
             if (developerRegister(username, password, confirm)) {
                 map.put("result", "SUC");
                 return ResponseEntity.ok(map);
@@ -75,10 +82,28 @@ public class LoginRegisterController {
     }
 
     @GetMapping("/preview")
-    public ResponseEntity<?> preview() throws SQLException{
+    public ResponseEntity<?> preview() throws SQLException {
         ArrayList<Map<String, Object>> arrayList = DBConnectClass.previewSoftwares();
         Map<String, ArrayList> map = new HashMap<>();
         map.put("preview", arrayList);
         return ResponseEntity.ok(map);
+    }
+
+    @GetMapping("software_images/{software_id}")
+    public ResponseEntity<byte[]> getImage(@PathVariable("software_id") int softwareId) throws SQLException, IOException {
+        String softwarename = DBConnectClass.searchSoftwarenameById(softwareId);
+        Path rootLocation = Paths.get("images");
+        Path imagePath = rootLocation.resolve(softwarename + ".jpg");
+        // 从资源目录中加载图片
+        Resource resource = new UrlResource(imagePath.toUri());
+
+        Path path = Paths.get(resource.getURI());
+        byte[] imageData = Files.readAllBytes(path);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, "image/jpg"); // 根据图片类型修改，例如 image/jpeg
+
+        return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
+
     }
 }
