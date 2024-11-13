@@ -283,6 +283,39 @@ public class DBConnectClass {
         return modname;
     }
 
+    public static int searchModPriceById(int modId) throws SQLException {
+        String sql = "SELECT price FROM mods WHERE modId = '" + modId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        int price = -1;
+        if (rs.next()) {
+            price = rs.getInt("price");
+        }
+        return price;
+    }
+
+    public static int searchModDownloadsById(int modId) throws SQLException {
+        String sql = "SELECT downloads FROM mods WHERE modId = '" + modId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        int downloads = -1;
+        if (rs.next()) {
+            downloads = rs.getInt("downloads");
+        }
+        return downloads;
+    }
+
+    public static int searchModUserIdById(int modId) throws SQLException {
+        String sql = "SELECT userId FROM mods WHERE modId = '" + modId + "'";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        int userId = -1;
+        if (rs.next()) {
+            userId = rs.getInt("userId");
+        }
+        return userId;
+    }
+
     public static String searchSoftwarenameById(int softwareId) throws SQLException {
         String sql = "SELECT softwarename FROM softwares WHERE softwareId = '" + softwareId + "'";
         Statement stmt = con.createStatement();
@@ -306,7 +339,7 @@ public class DBConnectClass {
         return price;
     }
 
-    public static int searchDownloadsById(int softwareId) throws SQLException{
+    public static int searchDownloadsById(int softwareId) throws SQLException {
         String sql = "SELECT downloads FROM softwares WHERE softwareId = '" + softwareId + "'";
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
@@ -318,7 +351,7 @@ public class DBConnectClass {
         return downloads;
     }
 
-    public static int searchDeveloperIdById(int softwareId) throws SQLException{
+    public static int searchDeveloperIdById(int softwareId) throws SQLException {
         String sql = "SELECT developerId FROM softwares WHERE softwareId = '" + softwareId + "'";
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
@@ -465,6 +498,24 @@ public class DBConnectClass {
         int developerId = searchDeveloperIdById(softwareId);
         String developername = searchDevelopernameById(developerId);
         map.put("developername", developername);
+
+        return map;
+    }
+
+    public static Map<String, Object> detailsMod(int modId) throws SQLException {
+        Map<String, Object> map = new HashMap<>();
+        String modname = searchModnameById(modId);
+        map.put("modname", modname);
+
+        int price = searchModPriceById(modId);
+        map.put("price", price);
+
+        int downloads = searchModDownloadsById(modId);
+        map.put("downloads", downloads);
+
+        int userId = searchModUserIdById(modId);
+        String username = searchUsernameById(userId);
+        map.put("username", username);
 
         return map;
     }
