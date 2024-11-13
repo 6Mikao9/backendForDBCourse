@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,15 @@ import java.util.Map;
 public class MessageController {
     @Autowired
     TrainingDataService trainingDataService;
+
+    @GetMapping("/query/{id}")
+    public ResponseEntity<?> query(@PathVariable("id") int id) throws SQLException {
+        ArrayList<Map<String, String>> arrayList = DBConnectClass.queryMessage(id);
+        Map<String, ArrayList> map = new HashMap<>();
+        map.put("message", arrayList);
+        return ResponseEntity.ok(map);
+    }
+
 
     @PostMapping("/send")
     public ResponseEntity<Map<String, String>> send(@RequestParam("sendId") int sendId, @RequestParam("content") String content, @RequestParam("receiveId") int receiveId) throws SQLException {

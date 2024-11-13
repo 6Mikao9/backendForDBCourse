@@ -377,6 +377,21 @@ public class DBConnectClass {
         return balance;
     }
 
+    public static ArrayList<Map<String, String>> queryMessage(int receiveId) throws SQLException {
+        ArrayList<Map<String, String>> arrayList = new ArrayList<>();
+
+        String sql = "SELECT content FROM messages WHERE receiveId = " + receiveId;
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+            String content = rs.getString("content");
+            Map<String, String> map = new HashMap<>();
+            map.put("content", content);
+            arrayList.add(map);
+        }
+        return arrayList;
+    }
+
     public static boolean sendMessage(int sendId, int receiveId, String content) throws SQLException {
         String sql = "SELECT * FROM users WHERE userId = " + sendId;
         Statement stmt = con.createStatement();
@@ -396,7 +411,7 @@ public class DBConnectClass {
         sql = "INSERT INTO messages (messageId, sendId, receiveId, content) VALUES (?,?,?,?)";
         PreparedStatement pstmt = con.prepareStatement(sql);
         // messageId会自动递增
-        pstmt.setInt(1,0);
+        pstmt.setInt(1, 0);
         pstmt.setInt(2, sendId);
         pstmt.setInt(3, receiveId);
         pstmt.setString(4, content);
