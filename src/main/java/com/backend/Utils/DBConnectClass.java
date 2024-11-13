@@ -562,6 +562,24 @@ public class DBConnectClass {
         return map;
     }
 
+    public static ArrayList<Map> modsOfSoftware(int softwareId) throws SQLException {
+        ArrayList<Map> arrayList = new ArrayList<>();
+
+        String sql = "SELECT * FROM mods WHERE softwareId = " + softwareId;
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        while (rs.next()) {
+            Map<String, Object> map = new HashMap<>();
+            int modId = rs.getInt("modId");
+            map.put("modId", modId);
+            String modname = rs.getString("modname");
+            map.put("modname", modname);
+            arrayList.add(map);
+        }
+        return arrayList;
+    }
+
     public static Map<String, Object> detailsMod(int modId) throws SQLException {
         Map<String, Object> map = new HashMap<>();
         String modname = searchModnameById(modId);
