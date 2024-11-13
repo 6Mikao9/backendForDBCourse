@@ -142,11 +142,25 @@ public class UserController {
 
     @PostMapping("/buy")
     public ResponseEntity<?> buy(@RequestParam("userId") int userId, @RequestParam("softwareId") int softwareId) throws SQLException {
-        if (!DBConnectClass.isUserById(userId) || !DBConnectClass.isSoftwareById(softwareId)){
+        if (!DBConnectClass.isUserById(userId) || !DBConnectClass.isSoftwareById(softwareId)) {
             return ResponseEntity.notFound().build();
         }
 
         Map<String, Object> map = DBConnectClass.userBuy(userId, softwareId);
+        return ResponseEntity.ok(map);
+    }
+
+    @GetMapping("/lib/{uid}")
+    public ResponseEntity<?> lib(@PathVariable("uid") int userId) throws SQLException {
+        if (!DBConnectClass.isUserById(userId)){
+            return ResponseEntity.notFound().build();
+        }
+
+        Map<String, ArrayList> map = new HashMap<>();
+
+        ArrayList<Map> arrayList = DBConnectClass.libByUserId(userId);
+
+        map.put("softwares", arrayList);
         return ResponseEntity.ok(map);
     }
 }

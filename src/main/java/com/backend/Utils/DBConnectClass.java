@@ -354,7 +354,7 @@ public class DBConnectClass {
     }
 
     public static int searchModUserIdById(int modId) throws SQLException {
-        String sql = "SELECT userId FROM mods WHERE modId = " + modId ;
+        String sql = "SELECT userId FROM mods WHERE modId = " + modId;
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         int userId = -1;
@@ -621,6 +621,23 @@ public class DBConnectClass {
         map.put("result", "SUC");
         map.put("balance", balance);
         return map;
+    }
+
+    public static ArrayList<Map> libByUserId(int userId) throws SQLException {
+        String sql = "SELECT softwareId FROM libs WHERE userId = " + userId;
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        ArrayList<Map> arrayList = new ArrayList<>();
+        while (rs.next()) {
+            Map<String, Object> map = new HashMap<>();
+            int softwareId = rs.getInt("softwareId");
+            map.put("softwareId", softwareId);
+            String softwarename = searchSoftwarenameById(softwareId);
+            map.put("softwarename", softwarename);
+            arrayList.add(map);
+        }
+
+        return arrayList;
     }
 
 
