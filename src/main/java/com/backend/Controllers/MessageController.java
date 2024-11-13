@@ -19,7 +19,7 @@ public class MessageController {
 
     @GetMapping("/query/{id}")
     public ResponseEntity<?> query(@PathVariable("id") int id) throws SQLException {
-        ArrayList<Map<String, String>> arrayList = DBConnectClass.queryMessage(id);
+        ArrayList<Map<String, Object>> arrayList = DBConnectClass.queryMessage(id);
         Map<String, ArrayList> map = new HashMap<>();
         map.put("message", arrayList);
         return ResponseEntity.ok(map);

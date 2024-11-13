@@ -377,15 +377,17 @@ public class DBConnectClass {
         return balance;
     }
 
-    public static ArrayList<Map<String, String>> queryMessage(int receiveId) throws SQLException {
-        ArrayList<Map<String, String>> arrayList = new ArrayList<>();
+    public static ArrayList<Map<String, Object>> queryMessage(int receiveId) throws SQLException {
+        ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
 
-        String sql = "SELECT content FROM messages WHERE receiveId = " + receiveId;
+        String sql = "SELECT * FROM messages WHERE receiveId = " + receiveId;
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         while (rs.next()) {
+            int messageId = rs.getInt("messageId");
             String content = rs.getString("content");
-            Map<String, String> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
+            map.put("messageId", messageId);
             map.put("content", content);
             arrayList.add(map);
         }
