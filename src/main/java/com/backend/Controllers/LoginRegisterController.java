@@ -1,5 +1,6 @@
 package com.backend.Controllers;
 
+import com.backend.Utils.DBConnectClass;
 import com.backend.service.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -71,8 +72,13 @@ public class LoginRegisterController {
             map.put("result", "FAIL");
             return ResponseEntity.status(414).body(map);
         }
+    }
 
-
-
+    @GetMapping("/preview")
+    public ResponseEntity<?> preview() throws SQLException{
+        ArrayList<Map<String, Object>> arrayList = DBConnectClass.previewSoftwares();
+        Map<String, ArrayList> map = new HashMap<>();
+        map.put("preview", arrayList);
+        return ResponseEntity.ok(map);
     }
 }

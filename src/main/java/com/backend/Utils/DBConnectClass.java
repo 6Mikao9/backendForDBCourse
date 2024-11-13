@@ -179,6 +179,23 @@ public class DBConnectClass {
         return true;
     }
 
+    public static ArrayList<Map<String, Object>> previewSoftwares() throws SQLException {
+        ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
+
+        String sql = "SELECT softwareId FROM softwares";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+            Map<String, Object> map = new HashMap<>();
+            int softwareId = rs.getInt("softwareId");
+            map.put("softwareId", softwareId);
+            String softwarename = searchSoftwarenameById(softwareId);
+            map.put("softwarename", softwarename);
+            arrayList.add(map);
+        }
+        return arrayList;
+    }
+
     // 每个mod都会唯一对应一个software
     // 一个mod可以多次上传，而且会被分配不同的modId
     public static boolean userUploadMod(int userId, String modname, String path, String softwarename) throws SQLException {
