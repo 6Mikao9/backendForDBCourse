@@ -91,7 +91,7 @@ public class DBConnectClass {
                 "PRIMARY KEY (userId, softwareId) )";
         stmt.executeUpdate(sql);
 
-        // 创建message表
+        // 创建messages表
         // message(messageId, sendId, receiveId, content)
         sql = "CREATE TABLE IF NOT EXISTS messages(" +
                 "messageId INT AUTO_INCREMENT PRIMARY KEY," +
@@ -99,6 +99,37 @@ public class DBConnectClass {
                 "receiveId INT NOT NULL," +
                 "content VARCHAR(500) NOT NULL)";
         stmt.executeUpdate(sql);
+
+        // 创建libs表
+        // lib(userId, softwareId)
+        sql = "CREATE TABLE IF NOT EXISTS libs (" +
+                "userId INT," +
+                "softwareId INT," +
+                "PRIMARY KEY (userId, softwareId))";
+        stmt.executeUpdate(sql);
+    }
+
+    // 判断userId是否有效
+    public static boolean isUserById(int userId) throws SQLException {
+        String sql = "SELECT * FROM users WHERE userId =" + userId;
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        if (rs.next()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isSoftwareById(int softwareId) throws SQLException {
+        String sql = "SELECT * FROM softwares WHERE softwareId =" + softwareId;
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        if (rs.next()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // user登陆
@@ -323,7 +354,7 @@ public class DBConnectClass {
     }
 
     public static int searchModUserIdById(int modId) throws SQLException {
-        String sql = "SELECT userId FROM mods WHERE modId = '" + modId + "'";
+        String sql = "SELECT userId FROM mods WHERE modId = " + modId ;
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         int userId = -1;
@@ -334,7 +365,7 @@ public class DBConnectClass {
     }
 
     public static String searchSoftwarenameById(int softwareId) throws SQLException {
-        String sql = "SELECT softwarename FROM softwares WHERE softwareId = '" + softwareId + "'";
+        String sql = "SELECT softwarename FROM softwares WHERE softwareId = " + softwareId;
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         String softwarename = "";
@@ -369,7 +400,7 @@ public class DBConnectClass {
     }
 
     public static int searchDeveloperIdById(int softwareId) throws SQLException {
-        String sql = "SELECT developerId FROM softwares WHERE softwareId = '" + softwareId + "'";
+        String sql = "SELECT developerId FROM softwares WHERE softwareId = " + softwareId;
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
 
@@ -381,7 +412,7 @@ public class DBConnectClass {
     }
 
     public static String searchUsernameById(int userId) throws SQLException {
-        String sql = "SELECT username FROM users WHERE userId = '" + userId + "'";
+        String sql = "SELECT username FROM users WHERE userId =" + userId;
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
 
@@ -390,6 +421,18 @@ public class DBConnectClass {
             username = rs.getString("username");
         }
         return username;
+    }
+
+    public static void setUserBalanceById(int userId, int balance) throws SQLException {
+        if (!isUserById(userId)) {
+            return;
+        }
+        String sql = "UPDATE users SET balance = ? WHERE userId = ?";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setInt(1, balance);
+        pstmt.setInt(2, userId);
+
+        pstmt.executeUpdate();
     }
 
     public static int searchUserBalanceById(int userId) throws SQLException {
@@ -534,6 +577,49 @@ public class DBConnectClass {
         String username = searchUsernameById(userId);
         map.put("username", username);
 
+        return map;
+    }
+
+    public static boolean isUserBuyById(int userId, int softwareId) throws SQLException {
+        String sql = "SELECT * FROM libs WHERE userId = " + userId + " AND softwareId = " + softwareId;
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        // 说明该软件已经在该用户库中，即已经购买
+        if (rs.next()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static Map<String, Object> userBuy(int userId, int softwareId) throws SQLException {
+        Map<String, Object> map = new HashMap<>();
+        int balance = searchUserBalanceById(userId);
+        int price = searchSoftwarePriceById(softwareId);
+
+        if (isUserBuyById(userId, softwareId)) {
+            map.put("result", "FAIL");
+            map.put("balance", balance);
+            return map;
+        }
+
+        // 余额不足，购买失败
+        if (balance < price) {
+            map.put("result", "FAIL");
+            map.put("balance", balance);
+            return map;
+        }
+
+        balance -= price;
+        setUserBalanceById(userId, balance);
+        String sql = "INSERT INTO libs (userId, softwareId) VALUES (?,?)";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setInt(1, userId);
+        pstmt.setInt(2, softwareId);
+        pstmt.executeUpdate();
+
+        map.put("result", "SUC");
+        map.put("balance", balance);
         return map;
     }
 

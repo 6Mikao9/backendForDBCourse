@@ -113,7 +113,7 @@ public class UserController {
             Resource resource = new UrlResource(filepath.toUri());
             if (resource.exists() && resource.isReadable()) {
                 return ResponseEntity.ok(resource);
-            }else {
+            } else {
                 return ResponseEntity.status(414).build();
             }
         } else {
@@ -122,13 +122,13 @@ public class UserController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity<?> status(@RequestParam("userId") int userId) throws SQLException{
+    public ResponseEntity<?> status(@RequestParam("userId") int userId) throws SQLException {
         Map<String, Object> map = new HashMap<>();
 
         String username = DBConnectClass.searchUsernameById(userId);
         int balance = DBConnectClass.searchUserBalanceById(userId);
         // 说明未找到
-        if (username.isEmpty() || balance == -1){
+        if (username.isEmpty() || balance == -1) {
             return ResponseEntity.notFound().build();
         }
         ArrayList<Map<String, Object>> carts = DBConnectClass.searchUserCartsById(userId);
@@ -137,6 +137,16 @@ public class UserController {
         map.put("balance", balance);
         map.put("cart", carts);
 
+        return ResponseEntity.ok(map);
+    }
+
+    @PostMapping("/buy")
+    public ResponseEntity<?> buy(@RequestParam("userId") int userId, @RequestParam("softwareId") int softwareId) throws SQLException {
+        if (!DBConnectClass.isUserById(userId) || !DBConnectClass.isSoftwareById(softwareId)){
+            return ResponseEntity.notFound().build();
+        }
+
+        Map<String, Object> map = DBConnectClass.userBuy(userId, softwareId);
         return ResponseEntity.ok(map);
     }
 }
