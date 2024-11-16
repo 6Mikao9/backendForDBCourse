@@ -158,9 +158,9 @@ public class DBConnectClass {
     }
 
     //用户注册
-    public static boolean userRegister(String username, String password, String confirm) throws SQLException {
+    public static boolean userRegister(String username, String passwords) throws SQLException {
         // 如果password与confirm不相同
-        if (!password.equals(confirm)) {
+        if (passwords.isEmpty()) {
             return false;
         }
 
@@ -184,8 +184,8 @@ public class DBConnectClass {
         return true;
     }
 
-    public static boolean developerRegister(String developername, String password, String confirm) throws SQLException {
-        if (!password.equals(confirm)) {
+    public static boolean developerRegister(String developername, String password) throws SQLException {
+        if (password.isEmpty()) {
             return false;
         }
 

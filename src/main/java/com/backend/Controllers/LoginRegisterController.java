@@ -55,10 +55,9 @@ public class LoginRegisterController {
         String type = requestBody.get("type");
         String username = requestBody.get("username");
         String password = requestBody.get("password");
-        String confirm = requestBody.get("confirm");
 
         if (type.equals("user")) {
-            if (userRegister(username, password, confirm)) {
+            if (userRegister(username, password)) {
                 map.put("result", "SUC");
                 return ResponseEntity.ok(map);
             } else {
@@ -66,7 +65,7 @@ public class LoginRegisterController {
                 return ResponseEntity.status(414).body(map);
             }
         } else if (type.equals("developer")) {
-            if (developerRegister(username, password, confirm)) {
+            if (developerRegister(username, password)) {
                 map.put("result", "SUC");
                 return ResponseEntity.ok(map);
             } else {
